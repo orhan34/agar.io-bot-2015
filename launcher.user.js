@@ -1,13 +1,14 @@
+
 // ==UserScript==
 // @name        AposLauncher
 // @namespace   AposLauncher
 // @include     http://agar.io/*
-// @version     3.063
+// @version     3.068
 // @grant       none
-// @author      http://www.twitch.tv/apostolique
+// @author      https://github.com/orhan34/
 // ==/UserScript==
 
-var aposLauncherVersion = 3.063;
+var aposLauncherVersion = 3.068;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -20,7 +21,7 @@ Array.prototype.peek = function() {
 var sha = "efde0488cc2cc176db48dd23b28a20b90314352b";
 function getLatestCommit() {
     window.jQuery.ajax({
-            url: "https://api.github.com/repos/orhan34/agar.io-bot-2015/git/refs/heads/master",
+            url: "https://api.github.com/repos/apostolique/Agar.io-bot/git/refs/heads/master",
             cache: false,
             dataType: "jsonp"
         }).done(function(data) {
@@ -40,7 +41,7 @@ function getLatestCommit() {
                 window.jQuery("#" + prefix + "Dialog").show();
             }
 
-            window.jQuery.get('https://raw.githubusercontent.com/orhan34/agar.io-bot-2015/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+            window.jQuery.get('https://raw.githubusercontent.com/Apostolique/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
                 var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
                 latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
 
@@ -48,7 +49,7 @@ function getLatestCommit() {
                 var myVersion = parseFloat(aposLauncherVersion + 0.0000);
 
                 if (latestVersion > myVersion) {
-                    update("aposLauncher", "launcher.user.js", "https://github.com/orhan34/agar.io-bot-2015/blob/" + sha + "/launcher.user.js/");
+                    update("aposLauncher", "launcher.user.js", "https://github.com/Apostolique/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
                 }
                 console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
             });
@@ -214,10 +215,10 @@ console.log("Running Bot Launcher!");
                 !g.N() || g.R || 20 >= g.size * h || (d = Math.max(g.size, d), a = Math.min(g.x, a), b = Math.min(g.y, b), c = Math.max(g.x, c), l = Math.max(g.y, l))
             }
             X = rb.ka({
-                ca: a - d + 100,
-                da: b - d + 100,
-                oa: c + d + 100,
-                pa: l + d + 100,
+                ca: a - 10,
+                da: b - 10,
+                oa: c + 10,
+                pa: l + 10,
                 ma: 2,
                 na: 4
             });
@@ -305,14 +306,14 @@ console.log("Running Bot Launcher!");
     function Za() {
         var a = ++Ba;
         console.log("Find " + y + P);
-        e.ajax("https://m.agar.io/", {
+        e.ajax("https://m.agar.io/findServer", {
             error: function() {
                 setTimeout(Za, 1E3)
             },
             success: function(b) {
-                a == Ba && (b = b.split("\n"), b[2] && alert(b[2]), Ca("ws://" + b[0], b[1]))
+                a == Ba && (b.alert && alert(b.alert), Ca("ws://" + b.ip, b.token))
             },
-            dataType: "text",
+            dataType: "json",
             method: "POST",
             cache: !1,
             crossDomain: !0,
@@ -343,8 +344,7 @@ console.log("Running Bot Launcher!");
         }
         if (tb) {
             var d = a.split(":");
-            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g,
-                "") + ".tech.agar.io:" + (+d[2] + 2E3)
+            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g, "") + ".tech.agar.io:" + (+d[2] + 2E3)
         }
         M = [];
         k = [];
@@ -365,7 +365,7 @@ console.log("Running Bot Launcher!");
             console.log("socket open");
             a = N(5);
             a.setUint8(0, 254);
-            a.setUint32(1, 4, !0);
+            a.setUint32(1, 5, !0);
             O(a);
             a = N(5);
             a.setUint8(0, 255);
@@ -642,16 +642,16 @@ console.log("Running Bot Launcher!");
             reviving = true;
         } else if (getPlayer().length > 0 && reviving) {
             reviving = false;
+            console.log("Done Reviving!");
         }
         
-        
-        var a;
         if (T()) {
-            a = fa - m / 2;
+            var a = fa - m / 2;
             var b = ga - r / 2;
             for (var i = 0; i < getPlayer().length; i++) {
                 var tempID = getPlayer()[i].id;
-                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) && .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(21), a.setUint8(0, 16), a.setFloat64(1, ia[i], !0), a.setFloat64(9, ja[i], !0), a.setUint32(17, tempID, !0), O(a))
+                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) &&
+                    .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(13), a.setUint8(0, 16), a.setInt32(1, ia[i], !0), a.setInt32(5, ja[i], !0), a.setUint32(9, tempID, !0), O(a))
             }
         }
     }
@@ -1173,9 +1173,11 @@ console.log("Running Bot Launcher!");
                         1 > c ? d.requestAnimationFrame(g) : b && b()
                     };
                 d.requestAnimationFrame(g)
+
             }
         } else e(".agario-profile-panel .progress-bar-star").text(a.e),
             e(".agario-exp-bar .progress-bar-text").text(a.f + "/" + a.d + " XP"), e(".agario-exp-bar .progress-bar").css("width", (88 * a.f / a.d).toFixed(2) + "%"), b && b()
+
     }
 
     function jb(a) {
@@ -1198,7 +1200,8 @@ console.log("Running Bot Launcher!");
             e: +a[4],
             f: +a[5],
             d: +a[6]
-        })
+        });
+        console.log("Hello Facebook?");
     }
 
     function La(a) {
@@ -1211,6 +1214,7 @@ console.log("Running Bot Launcher!");
             e("#helloContainer").attr("data-logged-in", "1");
             null != B ? e.ajax("https://m.agar.io/checkToken", {
                 error: function() {
+                    console.log("Facebook Fail!");
                     B = null;
                     La(a)
                 },
@@ -1220,7 +1224,8 @@ console.log("Running Bot Launcher!");
                         e: +a[0],
                         f: +a[1],
                         d: +a[2]
-                    })
+                    });
+                    console.log("Facebook connected!");
                 },
                 dataType: "text",
                 method: "POST",
@@ -1229,6 +1234,7 @@ console.log("Running Bot Launcher!");
                 data: B
             }) : e.ajax("https://m.agar.io/facebookLogin", {
                 error: function() {
+                    console.log("You have a Facebook problem!");
                     B = null;
                     e("#helloContainer").attr("data-logged-in", "0")
                 },
@@ -1294,7 +1300,7 @@ console.log("Running Bot Launcher!");
                 dArc = [],
                 dText = [],
                 lines = [],
-                names = ["agario.web.tr"],
+                names = ["www.agariot.com"],
                 originalName = names[Math.floor(Math.random() * names.length)],
                 sessionScore = 0,
                 serverIP = "",
@@ -1839,7 +1845,7 @@ console.log("Running Bot Launcher!");
                         }
                     }(),
                     U = {},
-                    ob = "agario.web.tr;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook".split(";"),
+                    ob = "www.agariot.com;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook".split(";"),
                     Gb = ["8", "nasa"],
                     Hb = ["m'blob"];
                 Ka.prototype = {
@@ -2006,7 +2012,7 @@ console.log("Running Bot Launcher!");
                             }
                             a.closePath();
                             d = this.name.toLowerCase();
-                            !this.n && kb && ":teams" != P ? -1 != ob.indexOf(d) ? (U.hasOwnProperty(d) || (U[d] = new Image, (d == "agario.web.tr" ? U[d].src = "http://i.imgur.com/q5FdCkx.png" : U[d].src = "skins/" +
+                            !this.n && kb && ":teams" != P ? -1 != ob.indexOf(d) ? (U.hasOwnProperty(d) || (U[d] = new Image, (d == "www.agariot.com" ? U[d].src = "http://i.imgur.com/q5FdCkx.png" : U[d].src = "skins/" +
                                 d + ".png")), c = 0 != U[d].width && U[d].complete ? U[d] : null) : c = null : c = null;
                             c = (e = c) ? -1 != Hb.indexOf(d) : !1;
                             b || a.stroke();
