@@ -1,14 +1,31 @@
-
+/*The MIT License (MIT)
+Copyright (c) 2015 Apostolique
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.*/
 // ==UserScript==
 // @name        AposLauncher
 // @namespace   AposLauncher
 // @include     http://agar.io/*
-// @version     3.068
+// @version     4.148
 // @grant       none
-// @author      https://github.com/orhan34/
+// @author      http://www.twitch.tv/apostolique
 // ==/UserScript==
+var aposLauncherVersion = 4.148;
 
-var aposLauncherVersion = 3.068;
+var showAd = true;
 
 Number.prototype.mod = function(n) {
     return ((this % n) + n) % n;
@@ -16,47 +33,72 @@ Number.prototype.mod = function(n) {
 
 Array.prototype.peek = function() {
     return this[this.length - 1];
-}
+};
 
 var sha = "efde0488cc2cc176db48dd23b28a20b90314352b";
+
 function getLatestCommit() {
     window.jQuery.ajax({
-            url: "https://api.github.com/repos/apostolique/Agar.io-bot/git/refs/heads/master",
-            cache: false,
-            dataType: "jsonp"
-        }).done(function(data) {
-            console.dir(data["data"])
-            console.log("hmm: " + data["data"]["object"]["sha"]);
-            sha = data["data"]["object"]["sha"];
+        url: "https://api.github.com/repos/apostolique/Agar.io-bot/git/refs/heads/master",
+        cache: false,
+        dataType: "jsonp"
+    }).done(function(data) {
+        console.dir(data.data);
+        console.log("hmm: " + data.data.object.sha);
+        sha = data.data.object.sha;
 
-            function update(prefix, name, url) {
-                window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
-                window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
-                window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
-                window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
-                window.jQuery('#' + prefix + 'Link').on('click', function() {
-                    window.jQuery("#" + prefix + "Dialog").hide();
-                    window.jQuery("#" + prefix + "Dialog").remove();
-                });
-                window.jQuery("#" + prefix + "Dialog").show();
-            }
-
-            window.jQuery.get('https://raw.githubusercontent.com/Apostolique/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
-                var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
-                latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
-
-                latestVersion = parseFloat(latestVersion + 0.0000);
-                var myVersion = parseFloat(aposLauncherVersion + 0.0000);
-
-                if (latestVersion > myVersion) {
-                    update("aposLauncher", "launcher.user.js", "https://github.com/Apostolique/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
-                }
-                console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+        function update(prefix, name, url) {
+            window.jQuery(document.body).prepend("<div id='" + prefix + "Dialog' style='position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 100; display: none;'>");
+            window.jQuery('#' + prefix + 'Dialog').append("<div id='" + prefix + "Message' style='width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;'>");
+            window.jQuery('#' + prefix + 'Message').append("<h2>UPDATE TIME!!!</h2>");
+            window.jQuery('#' + prefix + 'Message').append("<p>Grab the update for: <a id='" + prefix + "Link' href='" + url + "' target=\"_blank\">" + name + "</a></p>");
+            window.jQuery('#' + prefix + 'Link').on('click', function() {
+                window.jQuery("#" + prefix + "Dialog").hide();
+                window.jQuery("#" + prefix + "Dialog").remove();
             });
+            window.jQuery("#" + prefix + "Dialog").show();
+        }
 
-        }).fail(function() {});
+        window.jQuery.get('https://raw.githubusercontent.com/Apostolique/Agar.io-bot/master/launcher.user.js?' + Math.floor((Math.random() * 1000000) + 1), function(data) {
+            var latestVersion = data.replace(/(\r\n|\n|\r)/gm, "");
+            latestVersion = latestVersion.substring(latestVersion.indexOf("// @version") + 11, latestVersion.indexOf("// @grant"));
+
+            latestVersion = parseFloat(latestVersion + 0.0000);
+            var myVersion = parseFloat(aposLauncherVersion + 0.0000);
+
+            if (latestVersion > myVersion) {
+                update("aposLauncher", "launcher.user.js", "https://github.com/Apostolique/Agar.io-bot/blob/" + sha + "/launcher.user.js/");
+            }
+            console.log('Current launcher.user.js Version: ' + myVersion + " on Github: " + latestVersion);
+        });
+
+    }).fail(function() {});
 }
 getLatestCommit();
+
+function addAd() {
+    window.google_ad_client = "ca-pub-5878021809689194";
+    window.google_ad_slot = "1479874665";
+    window.google_ad_width = 300;
+    window.google_ad_height = 250;
+
+    window.jQuery(".side-container:last").append("<div class='agario-panel'><center id='aposAd'></center></div>");
+    var aposAd = document.getElementById('aposAd');
+    var w = document.write;
+    document.write = function (content) {
+        aposAd.innerHTML = content;
+        document.write = w;
+    };
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'http://pagead2.googlesyndication.com/pagead/show_ads.js';
+    document.body.appendChild(script);
+}
+
+if (showAd) {
+    addAd();
+}
 
 console.log("Running Bot Launcher!");
 (function(d, e) {
@@ -70,10 +112,6 @@ console.log("Running Bot Launcher!");
         if (82 == e.keyCode) {
             console.log("ToggleDraw");
             toggleDraw = !toggleDraw;
-        }
-        if (83 == e.keyCode) {
-            selectedCell = (selectedCell + 1).mod(getPlayer().length + 1);
-            console.log("Next Cell " + selectedCell);
         }
         if (68 == e.keyCode) {
             window.setDarkTheme(!getDarkBool());
@@ -91,45 +129,38 @@ console.log("Running Bot Launcher!");
                 window.refreshTwitch();
             }
         }
-        if (81 == e.keyCode) {
-            console.log("ToggleFollowMouse");
-            toggleFollow = !toggleFollow;
-        }
+        window.botList[botIndex].keyAction(e);
     }
 
     function humanPlayer() {
         //Don't need to do anything.
-        var player = getPlayer();
-
-        var destination = [];
-
-        for (var i = 0; i < player.length; i++) {
-            destination.push([getPointX(), getPointY()])
-        }
-
-        return destination;
+        return [getPointX(), getPointY()];
     }
+
+
 
     function pb() {
 
         //UPDATE
-        if (window.botList == null) {
-            window.botList = [];
-            window.jQuery('#locationUnknown').append(window.jQuery('<select id="bList" class="form-control" onchange="setBotIndex($(this).val());" />'));
-            window.jQuery('#locationUnknown').addClass('form-group');
-        }
+
+        window.botList = window.botList || [];
 
         window.jQuery('#nick').val(originalName);
 
-        if (window.botList.length == 0) {
-            window.botList.push(["Human", humanPlayer]);
-
-            var bList = window.jQuery('#bList');
-            window.jQuery('<option />', {
-                value: (window.botList.length - 1),
-                text: "Human"
-            }).appendTo(bList);
+        function HumanPlayerObject() {
+            this.name = "Human";
+            this.keyAction = function(key) {};
+            this.displayText = function() {
+                return [];
+            };
+            this.mainLoop = humanPlayer;
         }
+
+        var hpo = new HumanPlayerObject();
+
+        window.botList.push(hpo);
+
+        window.updateBotList();
 
         ya = !0;
         Pa();
@@ -202,6 +233,7 @@ console.log("Running Bot Launcher!");
 
     function Ra(a) {
         J *= Math.pow(.9, a.wheelDelta / -120 || a.detail || 0);
+        console.log("J: " + J);
         //UPDATE
         0.07 > J && (J = 0.07);
         J > 4 / h && (J = 4 / h)
@@ -231,18 +263,8 @@ console.log("Running Bot Launcher!");
 
     function Aa() {
         //UPDATE
-        if (selectedCell > 0 && selectedCell <= getPlayer().length) {
-            setPoint(((fa - m / 2) / h + s), ((ga - r / 2) / h + t), selectedCell - 1);
-            drawCircle(getPlayer()[selectedCell - 1].x, getPlayer()[selectedCell - 1].y, getPlayer()[selectedCell - 1].size, 8);
-            drawCircle(getPlayer()[selectedCell - 1].x, getPlayer()[selectedCell - 1].y, getPlayer()[selectedCell - 1].size / 2, 8);
-        } else if (selectedCell > getPlayer().length) {
-            selectedCell = 0;
-        }
-        if (toggle || window.botList[botIndex][0] == "Human") {
-            var startIndex = (selectedCell == 0 ? 0 : selectedCell - 1);
-            for (var i = 0; i < getPlayer().length - (selectedCell == 0 ? 0 : 1); i++) {
-                setPoint(((fa - m / 2) / h + s) + i, ((ga - r / 2) / h + t) + i, (i + startIndex).mod(getPlayer().length));
-                }
+        if (toggle || window.botList[botIndex].name == "Human") {
+            setPoint(((fa - m / 2) / h + s), ((ga - r / 2) / h + t));
         }
     }
 
@@ -252,7 +274,7 @@ console.log("Running Bot Launcher!");
                 b = a.val();
             b && (ka[b] = a.text())
         }));
-        e.get("https://m.agar.io/info", function(a) {
+        e.get(ap + "info", function(a) {
                 var b = {},
                     c;
                 for (c in a.regions) {
@@ -289,13 +311,13 @@ console.log("Running Bot Launcher!");
 
     function Va() {
         e("#region").val() ? d.localStorage.location = e("#region").val() : d.localStorage.location && e("#region").val(d.localStorage.location);
-        e("#region").val() ? e("#locationKnown").append(e("#region")) : e("#locationUnknown").append(e("#region"))
+        e("#region").val() ? e("#locationKnown").append(e("#region")) : e("#locationUnknown").append(e("#region"));
     }
 
     function sb() {
         la && (la = !1, setTimeout(function() {
             la = !0
-        //UPDATE
+                //UPDATE
         }, 6E4 * Ya))
     }
 
@@ -306,7 +328,7 @@ console.log("Running Bot Launcher!");
     function Za() {
         var a = ++Ba;
         console.log("Find " + y + P);
-        e.ajax("https://m.agar.io/findServer", {
+        e.ajax(ap + "findServer", {
             error: function() {
                 setTimeout(Za, 1E3)
             },
@@ -335,7 +357,7 @@ console.log("Running Bot Launcher!");
             } catch (c) {}
             q = null
         }
-        Da.la && (a = "ws://" + Da.la);
+        Da.ip && (a = "ws://" + Da.ip);
         if (null != L) {
             var l = L;
             L = function() {
@@ -344,7 +366,7 @@ console.log("Running Bot Launcher!");
         }
         if (tb) {
             var d = a.split(":");
-            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g, "") + ".tech.agar.io:" + (+d[2] + 2E3)
+            a = d[0] + "s://ip-" + d[1].replace(/\./g, "-").replace(/\//g, "") + ".tech.agar.io:" + +d[2]
         }
         M = [];
         k = [];
@@ -354,7 +376,7 @@ console.log("Running Bot Launcher!");
         F = [];
         z = A = null;
         R = 0;
-        $ = !1;
+        bo = !1;
         console.log("Connecting to " + a);
         //UPDATE
         serverIP = a;
@@ -393,7 +415,7 @@ console.log("Running Bot Launcher!");
     }
 
     function vb() {
-        $ && (ma = 500);
+        bo && (ma = 500);
         console.log("socket close");
         setTimeout(I, ma);
         ma *= 2
@@ -497,7 +519,7 @@ console.log("Running Bot Launcher!");
 
     function xb(a, b) {
         bb = C = Date.now();
-        $ || ($ = !0, e("#connecting").hide(), cb(), L && (L(), L = null));
+        bo || (bo = !0, e("#connecting").hide(), cb(), L && (L(), L = null));
         var c = Math.random();
         Ha = !1;
         var d = a.getUint16(b, !0);
@@ -546,7 +568,7 @@ console.log("Running Bot Launcher!");
             n.sa = c;
             n.Q = C;
             n.ba = w;
-            q && n.B(q); - 1 != M.indexOf(d) && -1 == k.indexOf(n) && (document.getElementById("overlays").style.display = "none", k.push(n), 1 == k.length && (s = n.x, t = n.y, db()))
+            q && n.B(q); - 1 != M.indexOf(d) && -1 == k.indexOf(n) && (document.getElementById("overlays").style.display = "none", k.push(n), n.birth = getLastUpdate(), n.birthMass = (n.size * n.size / 100), 1 == k.length && (s = n.x, t = n.y, db()))
 
             //UPDATE
             interNodes[d] = window.getCells()[d];
@@ -557,15 +579,17 @@ console.log("Running Bot Launcher!");
             //console.log("start: " + interNodes[element].updateTime + " current: " + D + " life: " + (D - interNodes[element].updateTime));
             var isRemoved = !window.getCells().hasOwnProperty(element);
 
+            //console.log("Time not updated: " + (window.getLastUpdate() - interNodes[element].getUptimeTime()));
             if (isRemoved && (window.getLastUpdate() - interNodes[element].getUptimeTime()) > 3000) {
                 delete interNodes[element];
             } else {
-                for (var i = 0; i < getPlayer().length; i++) {
-                    if (isRemoved && computeDistance(getPlayer()[i].x, getPlayer()[i].y, interNodes[element].x, interNodes[element].y) < getPlayer()[i].size + 710) {
+                if (isRemoved &&
+                    interNodes[element].x > (getX() - (1920 / 2) / getZoomlessRatio()) &&
+                    interNodes[element].x < (getX() + (1920 / 2) / getZoomlessRatio()) &&
+                    interNodes[element].y > getY() - (1080 / 2) / getZoomlessRatio() &&
+                    interNodes[element].y < getY() + (1080 / 2) / getZoomlessRatio()) {
 
-                        delete interNodes[element];
-                        break;
-                    }
+                    delete interNodes[element];
                 }
             }
         });
@@ -586,6 +610,10 @@ console.log("Running Bot Launcher!");
         return distance;
     }
 
+    /**
+     * Some horse shit of some sort.
+     * @return Horse Shit
+     */
     function screenDistance() {
         return Math.min(computeDistance(getOffsetX(), getOffsetY(), screenToGameX(getWidth()), getOffsetY()), computeDistance(getOffsetX(), getOffsetY(), getOffsetX(), screenToGameY(getHeight())));
     }
@@ -594,11 +622,23 @@ console.log("Running Bot Launcher!");
         return computeDistance(screenToGameX(0), screenToGameY(0), screenToGameX(getWidth()), screenToGameY(getHeight()));
     }
 
-    function screenToGameX(x) {
+    /**
+     * A conversion from the screen's horizontal coordinate system
+     * to the game's horizontal coordinate system.
+     * @param x in the screen's coordinate system
+     * @return x in the game's coordinate system
+     */
+    window.screenToGameX = function(x) {
         return (x - getWidth() / 2) / getRatio() + getX();
     }
 
-    function screenToGameY(y) {
+    /**
+     * A conversion from the screen's vertical coordinate system
+     * to the game's vertical coordinate system.
+     * @param y in the screen's coordinate system
+     * @return y in the game's coordinate system
+     */
+    window.screenToGameY = function(y) {
         return (y - getHeight() / 2) / getRatio() + getY();
     }
 
@@ -631,12 +671,16 @@ console.log("Running Bot Launcher!");
     function V() {
 
         //UPDATE
+        if (firstStart) {
+            Sa(false);
+        }
+        
         if (getPlayer().length == 0 && !reviving && ~~(getCurrentScore() / 100) > 0) {
             console.log("Dead: " + ~~(getCurrentScore() / 100));
             apos('send', 'pageview');
         }
 
-        if (getPlayer().length == 0) {
+        if (getPlayer().length == 0 && !firstStart) {
             console.log("Revive");
             setNick(originalName);
             reviving = true;
@@ -644,20 +688,17 @@ console.log("Running Bot Launcher!");
             reviving = false;
             console.log("Done Reviving!");
         }
-        
+
         if (T()) {
             var a = fa - m / 2;
             var b = ga - r / 2;
-            for (var i = 0; i < getPlayer().length; i++) {
-                var tempID = getPlayer()[i].id;
-                64 > a * a + b * b || .01 > Math.abs(eb - ia[i]) &&
-                    .01 > Math.abs(fb - ja[i]) || (eb = ia[i], fb = ja[i], a = N(13), a.setUint8(0, 16), a.setInt32(1, ia[i], !0), a.setInt32(5, ja[i], !0), a.setUint32(9, tempID, !0), O(a))
-            }
+            64 > a * a + b * b || .01 > Math.abs(eb - ia) &&
+                .01 > Math.abs(fb - ja) || (eb = ia, fb = ja, a = N(13), a.setUint8(0, 16), a.setInt32(1, ia, !0), a.setInt32(5, ja, !0), a.setUint32(9, 0, !0), O(a))
         }
     }
 
     function cb() {
-        if (T() && $ && null != K) {
+        if (T() && bo && null != K) {
             var a = N(1 + 2 * K.length);
             a.setUint8(0, 0);
             for (var b = 0; b < K.length; ++b) a.setUint16(1 + 2 * b, K.charCodeAt(b), !0);
@@ -710,11 +751,22 @@ console.log("Running Bot Launcher!");
         return a *= J
     }
 
+    //UPDATE
+    function hb2() {
+        var a;
+        a = Math.max(r / 1080, m / 1920);
+        return a;
+    }
+
     function yb() {
         if (0 != k.length) {
             for (var a = 0, b = 0; b < k.length; b++) a += k[b].size;
+            //UPDATE
+            var a2 = Math.pow(Math.min(64 / a, 1), .4) * hb2();
             a = Math.pow(Math.min(64 / a, 1), .4) * hb();
-            h = (9 * h + a) / 10
+            h = (9 * h + a) / 10;
+            //UPDATE
+            h2 = (9 * h2 + a2) / 10;
         }
     }
 
@@ -738,7 +790,8 @@ console.log("Running Bot Launcher!");
             ca = h;
             s = (s + a) / 2;
             t = (t + c) / 2;
-        } else s = (29 * s + aa) / 30, t = (29 * t + ba) / 30, h = (9 * h + ca * hb()) / 10;
+            //UPDATE
+        } else s = (29 * s + aa) / 30, t = (29 * t + ba) / 30, h = (9 * h + ca * hb()) / 10, h2 = (9 * h2 + ca * hb2()) / 10;
         qb();
         Aa();
         Ia || f.clearRect(0, 0, m, r);
@@ -754,7 +807,7 @@ console.log("Running Bot Launcher!");
         f.save();
         f.beginPath();
         f.lineWidth = 5;
-        f.strokeStyle = "#FFFFFF";
+        f.strokeStyle = (getDarkBool() ? '#F2FBFF' : '#111111');
         f.moveTo(getMapStartX(), getMapStartY());
         f.lineTo(getMapStartX(), getMapEndY());
         f.stroke();
@@ -768,20 +821,14 @@ console.log("Running Bot Launcher!");
         f.lineTo(getMapEndX(), getMapEndY());
         f.stroke();
         f.restore();
-        
+
         for (d = 0; d < v.length; d++) v[d].w(f);
         for (d = 0; d < Q.length; d++) Q[d].w(f);
         //UPDATE
         if (getPlayer().length > 0) {
-            var moveLoc = window.botList[botIndex][1](toggleFollow);
-            if (selectedCell > 0) {
-                Aa();
-            }
+            var moveLoc = window.botList[botIndex].mainLoop();
             if (!toggle) {
-                var startIndex = (selectedCell == 0 ? 0 : selectedCell);
-                for (var i = 0; i < getPlayer().length - (selectedCell == 0 ? 0 : 1); i++) {
-                    setPoint(moveLoc[(i + startIndex).mod(getPlayer().length)][0], moveLoc[(i + startIndex).mod(getPlayer().length)][1], (i + startIndex).mod(getPlayer().length));
-                }
+                setPoint(moveLoc[0], moveLoc[1]);
             }
         }
         customRender(f);
@@ -810,7 +857,7 @@ console.log("Running Bot Launcher!");
         var nbSeconds = 0;
         if (getPlayer().length > 0) {
             //nbSeconds = currentDate.getSeconds() + currentDate.getMinutes() * 60 + currentDate.getHours() * 3600 - lifeTimer.getSeconds() - lifeTimer.getMinutes() * 60 - lifeTimer.getHours() * 3600;
-            nbSeconds = (currentDate.getTime() - lifeTimer.getTime())/1000;
+            nbSeconds = (currentDate.getTime() - lifeTimer.getTime()) / 1000;
         }
 
         bestTime = Math.max(nbSeconds, bestTime);
@@ -854,7 +901,7 @@ console.log("Running Bot Launcher!");
             } else if (lines[i][4] == 6) {
                 d.strokeStyle = "#008080";
             } else if (lines[i][4] == 7) {
-                d.strokeStyle = "#FFFFFF";
+                d.strokeStyle = (getDarkBool() ? '#F2FBFF' : '#111111');
             } else {
                 d.strokeStyle = "#000000";
             }
@@ -882,7 +929,7 @@ console.log("Running Bot Launcher!");
             } else if (circles[i][3] == 6) {
                 d.strokeStyle = "#008080";
             } else if (circles[i][3] == 7) {
-                d.strokeStyle = "#FFFFFF";
+                d.strokeStyle = (getDarkBool() ? '#F2FBFF' : '#111111');
             } else {
                 d.strokeStyle = "#000000";
             }
@@ -914,7 +961,7 @@ console.log("Running Bot Launcher!");
             } else if (dArc[i][7] == 6) {
                 d.strokeStyle = "#008080";
             } else if (dArc[i][7] == 7) {
-                d.strokeStyle = "#FFFFFF";
+                d.strokeStyle = (getDarkBool() ? '#F2FBFF' : '#111111');
             } else {
                 d.strokeStyle = "#000000";
             }
@@ -960,11 +1007,11 @@ console.log("Running Bot Launcher!");
                 d.strokeStyle = '#003300';
                 d.stroke();
             } else {
-                var text = new va(18, (getDarkBool() ? '#F2FBFF' : '#111111'), true, '#000000');
+                var text = new va(18, (getDarkBool() ? '#F2FBFF' : '#111111'), true, (getDarkBool() ? '#111111' : '#F2FBFF'));
 
                 text.C(dText[i]);
                 var textRender = text.L();
-                d.drawImage(textRender, dPoints[i][0], dPoints[i][1]);
+                d.drawImage(textRender, dPoints[i][0] - (textRender.width / 2), dPoints[i][1] - (textRender.height / 2));
             }
 
         }
@@ -976,12 +1023,18 @@ console.log("Running Bot Launcher!");
 
         sessionScore = Math.max(getCurrentScore(), sessionScore);
 
+        var botString = window.botList[botIndex].displayText();
+
         var debugStrings = [];
-        debugStrings.push("Current Bot: " + window.botList[botIndex][0]);
+        debugStrings.push("Bot: " + window.botList[botIndex].name);
+        debugStrings.push("Launcher: AposLauncher " + aposLauncherVersion);
         debugStrings.push("T - Bot: " + (!toggle ? "On" : "Off"));
         debugStrings.push("R - Lines: " + (!toggleDraw ? "On" : "Off"));
-        debugStrings.push("Q - Follow Mouse: " + (toggleFollow ? "On" : "Off"));
-        debugStrings.push("S - Manual Cell: " + (selectedCell == 0 ? "None" : selectedCell) + " of " + getPlayer().length);
+
+        for (var i = 0; i < botString.length; i++) {
+            debugStrings.push(botString[i]);
+        }
+
         debugStrings.push("");
         debugStrings.push("Best Score: " + ~~(sessionScore / 100));
         debugStrings.push("Best Time: " + bestTime + " seconds");
@@ -1212,7 +1265,7 @@ console.log("Running Bot Launcher!");
                 e(".agario-profile-picture").attr("src", a.data.url)
             });
             e("#helloContainer").attr("data-logged-in", "1");
-            null != B ? e.ajax("https://m.agar.io/checkToken", {
+            null != B ? e.ajax(ap + "checkToken", {
                 error: function() {
                     console.log("Facebook Fail!");
                     B = null;
@@ -1232,7 +1285,7 @@ console.log("Running Bot Launcher!");
                 cache: !1,
                 crossDomain: !0,
                 data: B
-            }) : e.ajax("https://m.agar.io/facebookLogin", {
+            }) : e.ajax(ap + "facebookLogin", {
                 error: function() {
                     console.log("You have a Facebook problem!");
                     B = null;
@@ -1253,7 +1306,7 @@ console.log("Running Bot Launcher!");
         e("#helloContainer").attr("data-party-state", "4");
         a = decodeURIComponent(a).replace(/.*#/gim, "");
         Ma("#" + d.encodeURIComponent(a));
-        e.ajax(Na + "//m.agar.io/getToken", {
+        e.ajax(ap + "getToken", {
             error: function() {
                 e("#helloContainer").attr("data-party-state", "6")
             },
@@ -1279,6 +1332,7 @@ console.log("Running Bot Launcher!");
     if (!d.agarioNoInit) {
         var Na = d.location.protocol,
             tb = "https:" == Na,
+            ap = Na + "//m.agar.io/",
             xa = d.navigator.userAgent;
         if (-1 != xa.indexOf("Android")) d.ga && d.ga("send", "event", "MobileRedirect", "PlayStore"), setTimeout(function() {
                 d.location.href = "market://details?id=com.miniclip.agar.io"
@@ -1293,14 +1347,18 @@ console.log("Running Bot Launcher!");
                 //UPDATE
                 toggle = false,
                 toggleDraw = false,
-                toggleFollow = false,
+                shootTime = 0,
+                splitTime = 0,
+                shootCooldown = 100,
+                splitCooldown = 100,
                 tempPoint = [0, 0, 1],
                 dPoints = [],
                 circles = [],
                 dArc = [],
                 dText = [],
                 lines = [],
-                names = ["agario.web.tr"],
+                names = ["Agario.web.tr"],
+                firstStart = true;
                 originalName = names[Math.floor(Math.random() * names.length)],
                 sessionScore = 0,
                 serverIP = "",
@@ -1310,7 +1368,6 @@ console.log("Running Bot Launcher!");
                 botIndex = 0,
                 reviving = false,
                 message = [],
-                selectedCell = 0,
 
                 q = null,
                 s = 0,
@@ -1325,8 +1382,8 @@ console.log("Running Bot Launcher!");
                 ga = 0,
 
                 //UPDATE
-                ia = [-1],
-                ja = [-1],
+                ia = -1,
+                ja = -1,
 
                 zb = 0,
                 C = 0,
@@ -1337,6 +1394,7 @@ console.log("Running Bot Launcher!");
                 ra = 1E4,
                 sa = 1E4,
                 h = 1,
+                h2 = 1,
                 y = null,
                 kb = !0,
                 wa = !0,
@@ -1360,7 +1418,7 @@ console.log("Running Bot Launcher!");
                 mb = 0,
                 Db = ["#333333", "#FF3333", "#33FF33", "#3333FF"],
                 Ia = !1,
-                $ = !1,
+                bo = !1,
                 bb = 0,
                 B = null,
                 J = 1,
@@ -1386,6 +1444,7 @@ console.log("Running Bot Launcher!");
                 var ka = null;
                 d.setNick = function(a) {
                     //UPDATE
+                    firstStart = false;
                     originalName = a;
                     if (getPlayer().length == 0) {
                         lifeTimer = new Date();
@@ -1689,41 +1748,90 @@ console.log("Running Bot Launcher!");
                 d.connect = Ca;
 
                 //UPDATE
+                /**
+                 * Tells you if the game is in Dark mode.
+                 * @return Boolean for dark mode.
+                 */
                 window.getDarkBool = function() {
                     return ta;
                 }
+
+                /**
+                 * Tells you if the mass is shown.
+                 * @return Boolean for player's mass.
+                 */
                 window.getMassBool = function() {
                     return lb;
                 }
 
+                /**
+                 * This is a copy of everything that is shown on screen.
+                 * Normally stuff will time out when off the screen, this
+                 * memorizes everything that leaves the screen for a little
+                 * while longer.
+                 * @return The memory object.
+                 */
                 window.getMemoryCells = function() {
                     return interNodes;
                 }
 
+                /**
+                 * [getCellsArray description]
+                 * @return {[type]} [description]
+                 */
                 window.getCellsArray = function() {
                     return v;
                 }
 
+                /**
+                 * [getCellsArray description]
+                 * @return {[type]} [description]
+                 */
                 window.getCells = function() {
                     return E;
                 }
 
+                /**
+                 * Returns an array with all the player's cells.
+                 * @return Player's cells
+                 */
                 window.getPlayer = function() {
                     return k;
                 }
 
+                /**
+                 * The canvas' width.
+                 * @return Integer Width
+                 */
                 window.getWidth = function() {
                     return m;
                 }
 
+                /**
+                 * The canvas' height
+                 * @return Integer Height
+                 */
                 window.getHeight = function() {
                     return r;
                 }
 
+                /**
+                 * Scaling ratio of the canvas. The bigger this ration,
+                 * the further that you see.
+                 * @return Screen scaling ratio.
+                 */
                 window.getRatio = function() {
                     return h;
                 }
 
+                window.getZoomlessRatio = function() {
+                    return h2;
+                }
+
+                /**
+                 * [getOffsetX description]
+                 * @return {[type]} [description]
+                 */
                 window.getOffsetX = function() {
                     return aa;
                 }
@@ -1741,17 +1849,25 @@ console.log("Running Bot Launcher!");
                 }
 
                 window.getPointX = function() {
-                    return ia[0];
+                    return ia;
                 }
 
                 window.getPointY = function() {
-                    return ja[0];
+                    return ja;
                 }
 
+                /**
+                 * The X location of the mouse.
+                 * @return Integer X
+                 */
                 window.getMouseX = function() {
                     return fa;
                 }
 
+                /**
+                 * The Y location of the mouse.
+                 * @return Integer Y
+                 */
                 window.getMouseY = function() {
                     return ga;
                 }
@@ -1776,6 +1892,11 @@ console.log("Running Bot Launcher!");
                     var temp = screenDistance();
                     return temp;
                 }
+
+                /**
+                 * A timestamp since the last time the server sent any data.
+                 * @return Last update timestamp
+                 */
                 window.getLastUpdate = function() {
                     return C;
                 }
@@ -1784,26 +1905,21 @@ console.log("Running Bot Launcher!");
                     return R;
                 }
 
+                /**
+                 * The game's current mode. (":ffa", ":experimental", ":teams". ":party")
+                 * @return {[type]} [description]
+                 */
                 window.getMode = function() {
                     return P;
                 }
 
-                window.setPoint = function(x, y, index) {
-                    while (ia.length > getPlayer().length) {
-                        ia.pop();
-                        ja.pop();
-                    }
-                    if (index < ia.length) {
-                        ia[index] = x;
-                        ja[index] = y;
-                    } else {
-                        while (index < ia.length - 1) {
-                            ia.push(-1);
-                            ja.push(-1);
-                        }
-                        ia.push(x);
-                        ja.push(y);
-                    }
+                window.getServer = function() {
+                    return serverIP;
+                }
+
+                window.setPoint = function(x, y) {
+                    ia = x;
+                    ja = y;
                 }
 
                 window.setScore = function(a) {
@@ -1822,10 +1938,116 @@ console.log("Running Bot Launcher!");
                 window.setBotIndex = function(a) {
                     console.log("Changing bot");
                     botIndex = a;
+                    setLauncherCustomParameters(window.botList[a]);
+                }
+
+                window.setLauncherCustomParameterOnChange = function(a, b, c) {
+                    a.on('change input', function() {
+                        var val = window.jQuery(this).val();
+                        c.value = val;
+                        b.text(val);
+                    });
+                }
+
+                window.setLauncherCustomParameters = function(a) {
+                    window.jQuery('#launcher-custom-params').remove();
+                    window.jQuery('#launcher-wrapper').append(window.jQuery('<div id="launcher-custom-params">'));
+
+                    // If no custom parameters are defined, abort
+                    if (a.customParameters === undefined) {
+                        return;
+                    }
+
+                    for (var param in a.customParameters) {
+                        var form = window.jQuery('<div class="form-group">');
+                        var label = window.jQuery('<label>');
+                        var value = window.jQuery('<span style="float: right; display: none;">');
+                        var input = window.jQuery('<input class="form-control">');
+
+                        if (a.customParameters[param].label !== undefined) {
+                            label.text(a.customParameters[param].label);
+                        }
+                        else {
+                            label.text(param);
+                        }
+
+                        for (var paramKey in a.customParameters[param]) {
+                            if (paramKey == 'label') {
+                                continue;
+                            }
+
+                            if (paramKey == 'value') {
+                                value.text(a.customParameters[param][paramKey]);
+                            }
+                            else if (paramKey == 'type' && a.customParameters[param][paramKey] == 'range') {
+                                input.removeClass('form-control');
+                                value.show();
+                            }
+
+                            input.attr(paramKey, a.customParameters[param][paramKey]);
+                        }
+
+                        setLauncherCustomParameterOnChange(input, value, a.customParameters[param]);
+
+                        form.append(label);
+                        form.append(value);
+                        form.append(input);
+                        form.appendTo(window.jQuery('#launcher-custom-params'));
+                    }
+                }
+
+                window.setLauncherBotList = function() {
+                    window.jQuery('#launcher-bot-list').remove();
+                    window.jQuery('#launcher-wrapper').append(window.jQuery('<div id="launcher-bot-list" class="form-group">'));
+                    var select = window.jQuery('<select id="bList" class="form-control" onchange="setBotIndex(window.jQuery(this).val());" />');
+                    
+                    for (var i = 0; i < window.botList.length; i++) {
+                        if (window.botList[i].name == "Human" && window.botList.length > 1) {
+                            if (botIndex == i) {
+                                botIndex = (botIndex + 1).mod(window.botList.length);
+                            }
+                            continue;
+                        }
+
+                        window.jQuery('<option />', {
+                            value: i,
+                            text: window.botList[i].name
+                        }).appendTo(select);
+                    }
+
+                    select.appendTo(window.jQuery('#launcher-bot-list'));
                 }
 
                 window.setMessage = function(a) {
                     message = a;
+                }
+                
+                window.shoot = function() {
+                    if (!toggle && shootTime + shootCooldown < new Date().getTime()) {
+                        shootTime = new Date().getTime();
+                        opCode(21);
+                    }
+                }
+            
+                window.split = function() {
+            
+                    if (!toggle && splitTime + splitCooldown < new Date().getTime()) {
+                        splitTime = new Date().getTime();
+                        opCode(17);
+                    }
+                }
+                
+                window.updateBotList = function() {
+                    window.botList = window.botList || [];
+
+                    // Create wrapper for launcher controls
+                    window.jQuery('#launcher-wrapper').remove();
+                    window.jQuery('<div id="launcher-wrapper">').insertBefore('#agario-main-buttons');
+
+                    setLauncherBotList();
+
+                    // Show initial custom parameters
+                    setLauncherCustomParameters(window.botList[window.jQuery('#bList').val()]);
                 }
 
                 var ma = 500,
@@ -1845,8 +2067,8 @@ console.log("Running Bot Launcher!");
                         }
                     }(),
                     U = {},
-                    ob = "turkish;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook".split(";"),
-                    Gb = ["8", "nasa"],
+                    ob = "notreallyabot;poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;chaplin;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8;irs;receita federal;facebook;putin;merkel;tsipras;obama;kim jong-un;dilma;hollande;berlusconi;cameron;clinton;hillary;venezuela;blatter;chavez;cuba;fidel;merkel;palin;queen;boris;bush;trump".split(";"),
+                    Gb = ["8;nasa;putin;merkel;tsipras;obama;kim jong-un;dilma;hollande;berlusconi;cameron;clinton;hillary;blatter;chavez;fidel;merkel;palin;queen;boris;bush;trump"],
                     Hb = ["m'blob"];
                 Ka.prototype = {
                     V: null,
@@ -1859,7 +2081,7 @@ console.log("Running Bot Launcher!");
                     id: 0,
                     a: null,
                     name: null,
-                    o: null,    
+                    o: null,
                     O: null,
                     x: 0,
                     y: 0,
@@ -1883,12 +2105,15 @@ console.log("Running Bot Launcher!");
                     updateCode: 0,
                     danger: false,
                     dangerTimeOut: 0,
+                    isNotMoving: function() {
+                        return (this.x == this.s && this.y == this.t);
+                    },
                     isVirus: function() {
                         return this.h;
                     },
                     getUptimeTime: function() {
                         return this.Q;
-                    }, 
+                    },
                     X: function() {
                         var a;
                         for (a = 0; a < v.length; a++)
@@ -2012,7 +2237,7 @@ console.log("Running Bot Launcher!");
                             }
                             a.closePath();
                             d = this.name.toLowerCase();
-                            !this.n && kb && ":teams" != P ? -1 != ob.indexOf(d) ? (U.hasOwnProperty(d) || (U[d] = new Image, (d == "agario.web.tr" ? U[d].src = "http://i.imgur.com/q5FdCkx.png" : U[d].src = "skins/" +
+                            !this.n && kb && ":teams" != P ? -1 != ob.indexOf(d) ? (U.hasOwnProperty(d) || (U[d] = new Image, (d == "notreallyabot" ? U[d].src = "http://i.imgur.com/q5FdCkx.png" : U[d].src = "skins/" +
                                 d + ".png")), c = 0 != U[d].width && U[d].complete ? U[d] : null) : c = null : c = null;
                             c = (e = c) ? -1 != Hb.indexOf(d) : !1;
                             b || a.stroke();
@@ -2349,7 +2574,7 @@ apos('send', 'pageview');
 
 window.ignoreStream = false;
 window.refreshTwitch = function() {
-    $.ajax({
+    window.jQuery.ajax({
         url: "https://api.twitch.tv/kraken/streams/apostolique",
         cache: false,
         dataType: "jsonp"
